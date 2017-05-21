@@ -22,20 +22,6 @@ class Scraper
         binding.pry
     scraped_listings
   end
-  # doc = Nokogiri::HTML(open(index_url))
-  # student_roster = doc.css("div.student-card")
-  # scraped_students=Array.new
-  # student_roster.each do |student_node|
-  #   @student_hash = {name: " ", location: " ", profile_url: " " }
-  #   @student_hash[:name] = student_node.css("h4.student-name").text
-  #   if @student_hash[:name] != " "
-  #     @student_hash[:location] = student_node.css("p.student-location").text
-  #     @student_hash[:profile_url] = student_node.css('a').attribute("href").text
-  #     student=Student.new(@student_hash)
-  #     scraped_students << @student_hash
-  #   end
-  # end
-  # scraped_students
 
 
 end
