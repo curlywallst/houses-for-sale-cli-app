@@ -7,7 +7,7 @@ require 'area'
 
 class CommandLineInteface
 
-attr_accessor :town, :state
+attr_accessor :zip, :place
 BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
 
   def initialize
@@ -19,13 +19,25 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
   end
 
   def run
-    self.get_houses
+    get_houses
+    add_attributes_to_houses
     display_listings
+  end
+
+  def add_attributes_to_houses
+    House.all.each do |house|
+      attributes = Scraper.scrape_house_listing(house.home_url)
+      binding.pry
+      house.add_house_attributes(attributes)
+          binding.pry
+    end
+
   end
 
   def get_houses
     local_page = Scraper.get_page(@index_url)
-    listings = Scraper.get_listings(local_page)
+    listings_array = Scraper.get_listings(local_page)
+    House.create_from_collection(listings_array)
   end
 
   def display_listings

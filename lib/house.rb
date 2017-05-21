@@ -1,13 +1,25 @@
 class House
 
-    attr_accessor :address, :price, :home_url
+    attr_accessor :address, :price, :home_url, :additional_stats, :basic_stats, :detailed_stats, :photo_url
 
     @@all = []
 
-    def initialize(attributes_hash)
-      # binding.pry
+    def initialize(attributes_hash) # Initializes with house information - meta
       attributes_hash.each {|key, value| self.send(("#{key}="), value)}
       @@all << self
     end
+
+    def self.create_from_collection(listings_array)
+      listings_array.each {|listing| House.new(listing)}
+    end
+
+    def add_house_attributes(attributes_hash)
+        attributes_hash.each {|key, value| self.send(("#{key}="), value)}
+    end
+
+    def self.all
+      @@all
+    end
+
 
 end
