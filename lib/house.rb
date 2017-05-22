@@ -1,6 +1,6 @@
 class House
 
-    attr_accessor :id, :address, :price, :home_url, :additional_stats, :basic_stats, :detailed_stats, :photo_url
+    attr_accessor :id, :address, :price, :home_url, :additional_stats, :basic_stats, :detailed_stats, :photo_url, :acres, :bedrooms, :full_baths, :half_baths, :square_feet
 
       @@all = []
 

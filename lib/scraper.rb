@@ -37,20 +37,35 @@ class Scraper
       more_details << i
     end
     scraped_houses[:additional_stats]= more_details
-
     details = doc.css("div.sticky-bar-content div.container div ul.property-meta")
     more_details = details.children.text.gsub("\n", "").strip.split.join(" ")
     scraped_houses[:basic_stats] = more_details
-
+    test = details.css("ul li")
+  binding.pry
+    test.each do |i|
+      if i.children.last.text.include?("bed")
+        scraped_houses[:bedrooms] = i.css("span").text
+      elsif i.children.last.text.include?("full")
+        scraped_houses[:full_baths] = i.css("span").text
+      elsif i.children.last.text.include?("half")
+        scraped_houses[:half_baths] = i.css("span").text
+      elsif i.children.last.text.include?("sq")
+        scraped_houses[:square_feet] = i.css("span").text
+      elsif i.children.last.text.include?("acre")
+        scraped_houses[:acres] = i.css("span").text
+      end
+    end
+binding.pry
     details = doc.css("div.listing-subsection.listing-subsection-features div div.load-more-features div.row div.col-sm-6 ul li")
     more_details = []
     details.each do |i|
       more_details << i.text
     end
+
     scraped_houses[:detailed_stats] = more_details
     scraped_houses #returns hash of attributes
   end
-  
+
 
 
 end
