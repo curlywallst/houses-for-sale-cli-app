@@ -11,21 +11,23 @@ class Scraper
   def self.get_listings(local_page) # Scrapes the local page for house information - returns an array of listings
     listings = @doc.css("div.js-record-user-activity.js-navigate-to.srp-item div.aspect-content div.srp-item-details")
     scraped_listings=Array.new
+    index = 1
     listings.each do |house_node|
-      house_hash = {address: " ", price: nil, home_url: " "}
+      house_hash = {id: nil, address: " ", price: nil, home_url: " "}
+      house_hash[:id] = index
+      index += 1
       house_hash[:address] = house_node.css("div.srp-item-address span.listing-street-address").text
       house_hash[:price] = house_node.css("div.srp-item-price span.data-price-display").text
-      house_hash[:home_url] = "http://www.realtor.com#{house_node.css("a").attribute('href')}"
+      house_hash[:home_url] = "www.realtor.com#{house_node.css("a").attribute('href')}"
       scraped_listings << house_hash # An array of hashes which each contain the house attributes
     end
-    binding.pry
     scraped_listings
   end
 
   def self.scrape_house_listing(home_url)
+    chosen_url = "http://#{home_url}"
     scraped_houses = Hash.new
-    doc = Nokogiri::HTML(open(home_url))
-
+    doc = Nokogiri::HTML(open(chosen_url))
     scraped_houses[:photo_url] = doc.css("div.owl-item.active div img").last.attribute("src").value
 
     details = doc.css("div #ldp-detail-keyfacts ul li")
@@ -48,6 +50,7 @@ class Scraper
     scraped_houses[:detailed_stats] = more_details
     scraped_houses #returns hash of attributes
   end
+  
 
 
 end

@@ -3,6 +3,7 @@ require_relative "../lib/house.rb"
 require 'nokogiri'
 require 'colorize'
 require 'area'
+require 'table_print'
 
 
 class CommandLineInteface
@@ -11,27 +12,50 @@ attr_accessor :zip, :place
 BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
 
   def initialize
+    puts " "
+    puts "WELCOME TO HOUSES FOR SALE BY ZIPCODE"
+    puts "               -------"
+  end
+
+  def run
+    zip_input = "y"
+    while zip_input == "y" do
+      get_zip_code
+      House.reset
+      get_houses
+      display_listings
+      details_input = "y"
+      while details_input == "y" do
+        puts " "
+        puts "Would you like further details on any of these fine properties? y/n"
+        details_input = gets.strip
+        if details_input == "y"
+          puts " "
+          puts "What is the ID of the property you are interested in?"
+          input = gets.strip.to_i
+          binding.pry
+          add_attributes_to_houses(input)
+          binding.pry
+          display_detail
+        end
+        puts " "
+        puts "Would you like to try another zipcode? y/n"
+        zip_input = gets.strip
+      end
+      "It has been a pleasure working with you!  Good luck on your property search!"
+    end
+  end
+
+  def get_zip_code
     puts "What zipcode would you like to search?:"
+    puts " "
     @zip=gets.strip
     @place = @zip.to_region
     location_key=@place.gsub(", ","_")
     @index_url = BASE_PATH+location_key
-  end
-
-  def run
-    get_houses
-    add_attributes_to_houses
-    display_listings
-  end
-
-  def add_attributes_to_houses
-    House.all.each do |house|
-      attributes = Scraper.scrape_house_listing(house.home_url)
-      binding.pry
-      house.add_house_attributes(attributes)
-          binding.pry
-    end
-
+    puts " "
+    puts "Great choice!  #{@place} has many great properties to choose from!"
+    puts " "
   end
 
   def get_houses
@@ -40,10 +64,39 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
     House.create_from_collection(listings_array)
   end
 
-  def display_listings
-
+  def add_attributes_to_houses(input)
+    binding.pry
+    House.all.each do |house|
+      binding.pry
+      if house.id == input
+        attributes = Scraper.scrape_house_listing(house.home_url)
+        house.add_house_attributes(attributes)
+      end
+    end
   end
 
+
+  def display_listings
+    puts "---------------------------------------------------------------------------------------------------------"
+    puts " "
+    puts "  Properties For Sale in #{@place}:"
+    puts " "
+    tp.set :max_width, 120 # columns won't exceed 120 characters
+    tp House.all, :id, :address, :price, :home_url
+  end
+
+
+  def display_detail
+    House.all.each do |house|
+      if house.id = input
+        puts "---------------------------------------------------------------------------------------------------------"
+        puts " "
+        puts "  Property# #{id}. #{address}:"
+        puts " "
+        puts house.detailed_stats
+      end
+    end
+  end
 
 
 end
