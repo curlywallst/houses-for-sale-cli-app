@@ -33,20 +33,20 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
           puts " "
           puts "What is the ID of the property you are interested in?"
           input = gets.strip.to_i
-          binding.pry
-          add_attributes_to_houses(input)
-          binding.pry
-          display_detail
+          house_chosen = find_house(input)
+          add_attributes_to_houses(house_chosen)
+          display_detail(house_chosen)
         end
-        puts " "
-        puts "Would you like to try another zipcode? y/n"
-        zip_input = gets.strip
       end
-      "It has been a pleasure working with you!  Good luck on your property search!"
+      puts " "
+      puts "Would you like to try another zipcode? y/n"
+      zip_input = gets.strip
     end
+    puts "It has been a pleasure working with you!  Good luck on your property search!"
   end
 
   def get_zip_code
+    puts " "
     puts "What zipcode would you like to search?:"
     puts " "
     @zip=gets.strip
@@ -64,15 +64,19 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
     House.create_from_collection(listings_array)
   end
 
-  def add_attributes_to_houses(input)
-    binding.pry
+  def add_attributes_to_houses(house_chosen)
+    attributes = Scraper.scrape_house_listing(house_chosen.home_url)
+    house_chosen.add_house_attributes(attributes)
+  end
+
+  def find_house(id_selected)
+    house_chosen = nil
     House.all.each do |house|
-      binding.pry
-      if house.id == input
-        attributes = Scraper.scrape_house_listing(house.home_url)
-        house.add_house_attributes(attributes)
+      if house.id == id_selected
+        house_chosen = house
       end
     end
+    house_chosen
   end
 
 
@@ -86,17 +90,16 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
   end
 
 
-  def display_detail
-    House.all.each do |house|
-      if house.id = input
-        puts "---------------------------------------------------------------------------------------------------------"
-        puts " "
-        puts "  Property# #{id}. #{address}:"
-        puts " "
-        puts house.detailed_stats
-      end
-    end
+  def display_detail(house_chosen)
+    puts " "
+    puts "---------------------------------------------------------------------------------------------------------"
+    puts " "
+    puts "  Property #{house_chosen.id}: #{house_chosen.address} -- #{house_chosen.price}:"
+    puts " "
+    puts "#{house_chosen.basic_stats}"
+    puts house_chosen.additional_stats
+    puts house_chosen.detailed_stats
+    puts "House Photograph url: #{house_chosen.photo_url}"
   end
-
 
 end
