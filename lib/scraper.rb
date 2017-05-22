@@ -36,36 +36,70 @@ class Scraper
       i= i.children.text.gsub("\n", "").strip.split.join(" ")
       more_details << i
     end
+
     scraped_houses[:additional_stats]= more_details
     details = doc.css("div.sticky-bar-content div.container div ul.property-meta")
-    more_details = details.children.text.gsub("\n", "").strip.split.join(" ")
-    scraped_houses[:basic_stats] = more_details
-    test = details.css("ul li")
-  binding.pry
-    test.each do |i|
+    details = details.css("ul li")
+    scraped_houses[:half_baths] = "0"
+    details.each do |i|
       if i.children.last.text.include?("bed")
         scraped_houses[:bedrooms] = i.css("span").text
-      elsif i.children.last.text.include?("full")
-        scraped_houses[:full_baths] = i.css("span").text
-      elsif i.children.last.text.include?("half")
-        scraped_houses[:half_baths] = i.css("span").text
+      elsif i.children.text.include?("full")
+        scraped_houses[:full_baths] = i.css("span").first.text
+        if i.children.text.include?("half")
+          scraped_houses[:half_baths] = i.css("span").last.text
+        end
       elsif i.children.last.text.include?("sq")
         scraped_houses[:square_feet] = i.css("span").text
       elsif i.children.last.text.include?("acre")
         scraped_houses[:acres] = i.css("span").text
       end
     end
-binding.pry
-    details = doc.css("div.listing-subsection.listing-subsection-features div div.load-more-features div.row div.col-sm-6 ul li")
-    more_details = []
-    details.each do |i|
-      more_details << i.text
+
+    scraped_houses[:lead_sections] = []
+    lead_details = doc.css("div.listing-subsection.listing-subsection-features div div.load-more-features div.row.js-image-tag div.col-lg-3")
+    lead_details.each do |i|
+      section = []
+      title = i.css("h4")
+      section << title.text
+      info = i.css("ul li")
+      section_details = []
+      info.each do |x|
+        section_details << x.text
+      end
+      section << section_details
+      scraped_houses[:lead_sections] << section
     end
 
-    scraped_houses[:detailed_stats] = more_details
+    scraped_houses[:sections] = []
+    detail_titles = doc.css("div.listing-subsection.listing-subsection-features div div.load-more-features h4.title-subsection-sm")
+
+    detail_titles.each do |i|
+      section = []
+      section << i.text
+      scraped_houses[:sections] << section
+    end
+
+    detail_section = doc.css("div.listing-subsection.listing-subsection-features div div.load-more-features div.row")
+    index = 0
+    title_index = 0
+    detail_section.each do |i|
+      if index != 0
+        section = []
+        section_info = i.css("li")
+        section_details = []
+        section_info.each do |x|
+          section_details << x.text
+        end
+      end
+
+      if index !=0
+        scraped_houses[:sections][title_index] << section_details
+        title_index += 1
+      end
+      index += 1
+    end
+
     scraped_houses #returns hash of attributes
   end
-
-
-
 end

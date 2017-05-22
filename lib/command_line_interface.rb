@@ -13,7 +13,7 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
 
   def initialize
     puts " "
-    puts "WELCOME TO HOUSES FOR SALE BY ZIPCODE"
+    puts "WELCOME TO HOUSES FOR SALE BY ZIPCODE".green
     puts "               -------"
   end
 
@@ -27,11 +27,11 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
       details_input = "y"
       while details_input == "y" do
         puts " "
-        puts "Would you like further details on any of these fine properties? y/n"
+        puts "Would you like further details on any of these fine properties? y/n".green
         details_input = gets.strip
         if details_input == "y"
           puts " "
-          puts "What is the ID of the property you are interested in?"
+          puts "What is the ID of the property you are interested in?".green
           input = gets.strip.to_i
           house_chosen = find_house(input)
           add_attributes_to_houses(house_chosen)
@@ -39,22 +39,22 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
         end
       end
       puts " "
-      puts "Would you like to try another zipcode? y/n"
+      puts "Would you like to try another zipcode? y/n".green
       zip_input = gets.strip
     end
-    puts "It has been a pleasure working with you!  Good luck on your property search!"
+    puts "It has been a pleasure working with you!  Good luck on your property search!".green
   end
 
   def get_zip_code
     puts " "
-    puts "What zipcode would you like to search?:"
+    puts "What zipcode would you like to search?:".green
     puts " "
     @zip=gets.strip
     @place = @zip.to_region
     location_key=@place.gsub(", ","_")
     @index_url = BASE_PATH+location_key
     puts " "
-    puts "Great choice!  #{@place} has many great properties to choose from!"
+    puts "Great choice!  #{@place} has many great properties to choose from!".green
     puts " "
   end
 
@@ -83,7 +83,7 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
   def display_listings
     puts "---------------------------------------------------------------------------------------------------------"
     puts " "
-    puts "  Properties For Sale in #{@place}:"
+    puts "  Properties For Sale in #{@place}:".red
     puts " "
     tp.set :max_width, 120 # columns won't exceed 120 characters
     tp House.all, :id, :address, :price, :home_url
@@ -94,12 +94,32 @@ BASE_PATH = "http://www.realtor.com/realestateandhomes-search/"
     puts " "
     puts "---------------------------------------------------------------------------------------------------------"
     puts " "
-    puts "  Property #{house_chosen.id}: #{house_chosen.address} -- #{house_chosen.price}:"
+    puts "  Property #{house_chosen.id}: #{house_chosen.address} -- #{house_chosen.price}:".red
+    puts "  -----------------------------------------------------"
     puts " "
-    puts "#{house_chosen.basic_stats}"
+    puts "  Bedrooms: #{house_chosen.bedrooms}"
+    puts "  Full Baths: #{house_chosen.full_baths}"
+    puts "  Half Baths: #{house_chosen.half_baths}"
+    puts "  Square Feet: #{house_chosen.square_feet}"
+    puts "  Lot Size: #{house_chosen.acres}"
+    puts " "
     puts house_chosen.additional_stats
-    puts house_chosen.detailed_stats
-    puts "House Photograph url: #{house_chosen.photo_url}"
+    puts " "
+    print_sections(house_chosen.lead_sections)
+    print_sections(house_chosen.sections)
+    puts "House Photograph url: #{house_chosen.photo_url}".red
+  end
+
+  def print_sections(sections)
+    index = 0
+    sections.each do |i|
+      puts i[0].blue
+      puts "----------------------------------------"
+      i[1].each do |x|
+        puts x
+      end
+      puts " "
+    end
   end
 
 end

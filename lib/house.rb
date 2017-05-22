@@ -1,8 +1,10 @@
 class House
 
-    attr_accessor :id, :address, :price, :home_url, :additional_stats, :basic_stats, :detailed_stats, :photo_url, :acres, :bedrooms, :full_baths, :half_baths, :square_feet
+    attr_accessor :id, :address, :price, :home_url, :additional_stats, :photo_url, :acres, :bedrooms, :full_baths, :half_baths, :square_feet, :section_labels
+    attr_accessor :sections, :lead_sections
 
-      @@all = []
+
+    @@all = []
 
     def initialize(attributes_hash) # Initializes with house information - meta
       attributes_hash.each {|key, value| self.send(("#{key}="), value)}
