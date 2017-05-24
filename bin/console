@@ -2,5 +2,11 @@
 
 require_relative "../config/environment"
 
+require 'irb'
 
-CommandLineInteface.new.run
+def reload!
+  load_all './lib'
+end
+
+
+IRB.start
