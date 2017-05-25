@@ -16,46 +16,55 @@ BASE_PATH = "./fixtures/"
   end
 
   def run
-    zip_input = "y"
-    while zip_input == "y" do
-      get_zip_code  # Takes zipcode from user, Turns it into City, St, and gets url for listings page
-      House.reset  # Clears houses
-      get_houses  # Gets houses from listing page
-      display_listings  # Displays listings
-      details_input = "y"
-      while details_input == "y" do
-        puts " "
-        puts "Would you like further details on any of these fine properties? y/n".green # Asks user if they want more info on any house
-        details_input = gets.strip
-        if details_input == "y" # Gets more info if the user wants it
-          puts " "
-          puts "What is the ID of the property you are interested in?".green
-          input = gets.strip.to_i
-          house_chosen = find_house(input)
-          add_attributes_to_houses(house_chosen) # Adds the further details to the house instance
-          display_detail(house_chosen)  # Displays the detailed listing information
-        end
-      end
+    zip_input = ""
+    while zip_input != "exit" do
       puts " "
-      puts "Would you like to try another zipcode? y/n".green # Asks user if they want to try another zipcode
+      puts "What zipcode would you like to search? Type 5 digit zipcode or exit".green
+      puts " "
       zip_input = gets.strip
+      if zip_input.to_s.length == 5 && zip_input.to_i <= 99999
+        get_zip_code(zip_input) # Takes zipcode from user, Turns it into City, St, and gets url for listings page
+        puts " "
+        puts "Great choice!  #{@place} has many great properties to choose from!".green
+        puts " "
+        House.reset  # Clears houses
+        get_houses  # Gets houses from listing page
+        display_listings  # Displays listings
+        details_input = "y"
+        while details_input != "n" do
+          puts " "
+          puts "Would you like further details on any of these fine properties?  Enter y or n or list to see the listings again.".green # Asks user if they want more info on any house
+          details_input = gets.strip
+          case details_input
+          when "list"
+            display_listings
+          when "y" # Gets more info if the user wants it
+            puts " "
+            puts "What is the ID of the property you are interested in?".green
+            input = gets.strip.to_i
+            house_chosen = find_house(input)
+            add_attributes_to_houses(house_chosen) # Adds the further details to the house instance
+            display_detail(house_chosen)  # Displays the detailed listing information
+          else
+            puts "That response was not understood.".green if details_input != "n"
+          end
+        end
+        puts " "
+        puts "Would you like to try another zipcode? Type y or exit.".green # Asks user if they want to try another zipcode
+        zip_input = gets.strip
+      else
+        puts "That response was not understood.".green if zip_input != "exit"
+      end
     end
     puts "It has been a pleasure working with you!  Good luck on your property search!".green # If not, says goodbye to user
   end
 
-  def get_zip_code
-    puts " "
-    puts "What zipcode would you like to search?:".green
-    puts " "
-    @zip=gets.strip
-    @place = @zip.to_region # Uses area gem to get location
+  def get_zip_code(zip_input)
+    @place = zip_input.to_region # Uses area gem to get location
     location_key=@place.gsub(", ","_")
-    location_pointer = "eliot.html" if @zip == "03903"
-    location_pointer = "portsmouth.html" if @zip == "03801"
+    location_pointer = "eliot.html" if zip_input == "03903"
+    location_pointer = "portsmouth.html" if zip_input == "03801"
     @index_url = BASE_PATH+location_pointer # Creates url of listing page for location
-    puts " "
-    puts "Great choice!  #{@place} has many great properties to choose from!".green
-    puts " "
   end
 
   def get_houses
@@ -71,12 +80,7 @@ BASE_PATH = "./fixtures/"
 
   def find_house(id_selected)
     house_chosen = nil
-    House.all.each do |house|
-      if house.id == id_selected
-        house_chosen = house
-      end
-    end
-    house_chosen
+    house_chosen = House.all.find { |house| house.id == id_selected }
   end
 
 
