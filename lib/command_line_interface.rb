@@ -17,7 +17,7 @@ BASE_PATH = "./fixtures/"
 
   def run
     zip_input = ""
-    while zip_input != "exit" do
+    while zip_input.downcase != "exit" do
       puts " "
       puts "What zipcode would you like to search? Type 5 digit zipcode or exit".green
       puts " "
@@ -31,10 +31,10 @@ BASE_PATH = "./fixtures/"
         get_houses  # Gets houses from listing page
         display_listings  # Displays listings
         details_input = "y"
-        while details_input != "n" do
+        while details_input.downcase != "n" do
           puts " "
           puts "Would you like further details on any of these fine properties?  Enter y or n or list to see the listings again.".green # Asks user if they want more info on any house
-          details_input = gets.strip
+          details_input = gets.strip.downcase
           case details_input
           when "list"
             display_listings
@@ -51,7 +51,7 @@ BASE_PATH = "./fixtures/"
         end
         puts " "
         puts "Would you like to try another zipcode? Type y or exit.".green # Asks user if they want to try another zipcode
-        zip_input = gets.strip
+        zip_input = gets.strip.downcase
       else
         puts "That response was not understood.".green if zip_input != "exit"
       end
