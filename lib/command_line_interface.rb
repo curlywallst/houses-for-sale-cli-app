@@ -1,21 +1,10 @@
-require 'nokogiri'
-require 'colorize'
-require 'area'
-require 'table_print'
-
-
 class CommandLineInteface
 
 attr_accessor :zip, :place
 BASE_PATH = "./fixtures/"
 
-  def initialize #Wecomes user
-    puts " "
-    puts "WELCOME TO HOUSES FOR SALE BY ZIPCODE".green
-    puts "               -------"
-  end
-
   def run
+    welcome
     zip_input = ""
     while zip_input.downcase != "exit" do
       puts " "
@@ -30,25 +19,7 @@ BASE_PATH = "./fixtures/"
         House.reset  # Clears houses
         get_houses  # Gets houses from listing page
         display_listings  # Displays listings
-        details_input = "y"
-        while details_input.downcase != "n" do
-          puts " "
-          puts "Would you like further details on any of these fine properties?  Enter y or n or list to see the listings again.".green # Asks user if they want more info on any house
-          details_input = gets.strip.downcase
-          case details_input
-          when "list"
-            display_listings
-          when "y" # Gets more info if the user wants it
-            puts " "
-            puts "What is the ID of the property you are interested in?".green
-            input = gets.strip.to_i
-            house_chosen = find_house(input)
-            add_attributes_to_houses(house_chosen) # Adds the further details to the house instance
-            display_detail(house_chosen)  # Displays the detailed listing information
-          else
-            puts "That response was not understood.".green if details_input != "n"
-          end
-        end
+        get_details
         puts " "
         puts "Would you like to try another zipcode? Type y or exit.".green # Asks user if they want to try another zipcode
         zip_input = gets.strip.downcase
@@ -57,6 +28,34 @@ BASE_PATH = "./fixtures/"
       end
     end
     puts "It has been a pleasure working with you!  Good luck on your property search!".green # If not, says goodbye to user
+  end
+
+  def welcome #Wecomes user
+    puts " "
+    puts "WELCOME TO HOUSES FOR SALE BY ZIPCODE".green
+    puts "               -------"
+  end
+
+  def get_details
+    details_input = "y"
+    while details_input.downcase != "n" do
+      puts " "
+      puts "Would you like further details on any of these fine properties?  Enter y or n or list to see the listings again.".green # Asks user if they want more info on any house
+      details_input = gets.strip.downcase
+      case details_input
+      when "list"
+        display_listings
+      when "y" # Gets more info if the user wants it
+        puts " "
+        puts "What is the ID of the property you are interested in?".green
+        input = gets.strip.to_i
+        house_chosen = find_house(input)
+        add_attributes_to_houses(house_chosen) # Adds the further details to the house instance
+        display_detail(house_chosen)  # Displays the detailed listing information
+      else
+        puts "That response was not understood.".green if details_input != "n"
+      end
+    end
   end
 
   def get_zip_code(zip_input)
