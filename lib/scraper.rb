@@ -42,10 +42,7 @@ class Scraper
       attribute = look_for_title_match(title)
       if attribute !=  nil
         details = node.css("ul li")
-        info = []
-        details.each do |x|
-          info << x.text
-        end
+        info = details.collect {|x| x.text}
         scraped_houses[:"#{attribute}"] = [title.text.strip, info] if info.length != 0
       end
     end
@@ -56,10 +53,7 @@ class Scraper
       attribute = look_for_title_match(node)
       if attribute !=  nil
         details = node.next.next
-        info = []
-        details.css("li").each do |x|
-          info << x.text
-        end
+        info = details.css("li").collect {|x| x.text}
         scraped_houses[:"#{attribute}"] = [node.text.strip,info] if info.length != 0
       end
     end
