@@ -28,5 +28,7 @@ class House
       @@all = []
     end
 
-
+    def self.sort_by_price_desc
+      #sorted_houses = @@all[:price].sort
+    end
 end

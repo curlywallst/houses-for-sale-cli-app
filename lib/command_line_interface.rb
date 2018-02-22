@@ -18,6 +18,7 @@ BASE_PATH = "./fixtures/"
         puts " "
         House.reset  # Clears houses
         get_houses  # Gets houses from listing page
+
         display_listings  # Displays listings
         get_details
         puts " "
@@ -68,8 +69,8 @@ BASE_PATH = "./fixtures/"
 
   def get_houses
     local_page = Scraper.get_page(@index_url) # Gets listing page for the location
-    listings_array = Scraper.get_listings(local_page) # Gets array of hashes - each hash is attributes and values for a listing
-    House.create_from_collection(listings_array) # Creates houses from listing array
+    Scraper.get_listings(local_page) # Gets array of hashes - each hash is attributes and values for a listing
+    #House.create_from_collection(listings_array) # Creates houses from listing array
   end
 
   def add_attributes_to_houses(house_chosen) # If user wants more info gets more listing details and adds them to the chosen house

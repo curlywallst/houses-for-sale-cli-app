@@ -10,7 +10,7 @@ class Scraper
 
   def self.get_listings(local_page) # Scrapes the local page for house information - returns an array of hashes = each with listing's attributes
     listings = @doc.css("div.js-record-user-activity.js-navigate-to.srp-item div.aspect-content div.srp-item-details")
-    scraped_listings=Array.new
+    #scraped_listings=Array.new
     index = 1
     listings.each do |house_node| # For each house node found in the listing it scrapes the basic listing information
       house_hash = {id: nil, address: " ", price: nil, home_url: " "}
@@ -25,9 +25,11 @@ class Scraper
       house_hash[:home_url] = "./fixtures/littlebrook.html" if house_hash[:address].include?("Littlebrook")
       house_hash[:home_url] = "./fixtures/old.html" if house_hash[:address].include?("Old")
       house_hash[:home_url] = "./fixtures/crescent.html" if house_hash[:address].include?("Crescent")
-      scraped_listings << house_hash # An array of hashes which each contain the house attributes
+      House.new(house_hash)
+      #scraped_listings << house_hash # An array of hashes which each contain the house attributes
     end
-    scraped_listings # Returns array hashes - each with listing attributes and values to be used in creation of House instances
+
+    #scraped_listings # Returns array hashes - each with listing attributes and values to be used in creation of House instances
   end
 
   def self.scrape_house_listing(home_url)
